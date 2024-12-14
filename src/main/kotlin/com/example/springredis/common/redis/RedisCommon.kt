@@ -61,4 +61,36 @@ class RedisCommon(
         val jsonValues = template.opsForZSet().reverseRange(key, 0, n - 1)
         return jsonValues?.map { objectMapper.readValue(it, clazz) }?.toSet() ?: emptySet()
     }
+
+    fun <T> addToListLeft(
+        key: String,
+        value: T,
+    ) {
+        val jsonValue = objectMapper.writeValueAsString(value)
+        template.opsForList().leftPush(key, jsonValue)
+    }
+
+    fun <T> addToListRight(
+        key: String,
+        value: T,
+    ) {
+        val jsonValue = objectMapper.writeValueAsString(value)
+        template.opsForList().rightPush(key, jsonValue)
+    }
+
+    fun <T> getList(
+        key: String,
+        clazz: Class<T>,
+    ): List<T> {
+        val jsonValues = template.opsForList().range(key, 0, -1)
+        return jsonValues?.map { objectMapper.readValue(it, clazz) } ?: emptyList()
+    }
+
+    fun <T> removeFromList(
+        key: String,
+        value: T,
+    ) {
+        val jsonValue = objectMapper.writeValueAsString(value)
+        template.opsForList().remove(key, 1, jsonValue)
+    }
 }

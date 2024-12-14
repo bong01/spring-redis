@@ -1,0 +1,23 @@
+POST {{host}}/strings
+Content-Type: application/json
+
+{
+  "key": "test",
+  "value": "test"
+}
+
+###
+< {%
+    request.variables.set("key", "test")
+%}
+GET {{host}}/strings/{{key}}
+Content-Type: application/json
+
+###
+POST {{host}}/strings/bulk
+Content-Type: application/json
+
+{
+  "key": "test",
+  "values": ["test1", "test2"]
+}

@@ -33,4 +33,32 @@ class RedisCommon(
         val jsonMap = data.mapValues { objectMapper.writeValueAsString(it.value) }
         template.opsForValue().multiSet(jsonMap)
     }
+
+    fun <T> addToSortedSet(
+        key: String,
+        value: T,
+        score: Double,
+    ) {
+        val jsonValue = objectMapper.writeValueAsString(value)
+        template.opsForZSet().add(key, jsonValue, score)
+    }
+
+    fun <T> rangeByScore(
+        key: String,
+        minScore: Double,
+        maxScore: Double,
+        clazz: Class<T>,
+    ): Set<T> {
+        val jsonValues = template.opsForZSet().rangeByScore(key, minScore, maxScore)
+        return jsonValues?.map { objectMapper.readValue(it, clazz) }?.toSet() ?: emptySet()
+    }
+
+    fun <T> topNFromSortedSet(
+        key: String,
+        n: Long,
+        clazz: Class<T>,
+    ): Set<T> {
+        val jsonValues = template.opsForZSet().reverseRange(key, 0, n - 1)
+        return jsonValues?.map { objectMapper.readValue(it, clazz) }?.toSet() ?: emptySet()
+    }
 }

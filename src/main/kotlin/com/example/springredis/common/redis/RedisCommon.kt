@@ -93,4 +93,29 @@ class RedisCommon(
         val jsonValue = objectMapper.writeValueAsString(value)
         template.opsForList().remove(key, 1, jsonValue)
     }
+
+    fun <T> putInHash(
+        key: String,
+        hashKey: String,
+        value: T,
+    ) {
+        val jsonValue = objectMapper.writeValueAsString(value)
+        template.opsForHash<String, String>().put(key, hashKey, jsonValue)
+    }
+
+    fun <T> getFromHash(
+        key: String,
+        hashKey: String,
+        clazz: Class<T>,
+    ): T? {
+        val jsonValue = template.opsForHash<String, String>().get(key, hashKey)
+        return jsonValue?.let { objectMapper.readValue(it, clazz) }
+    }
+
+    fun removeFromHash(
+        key: String,
+        hashKey: String,
+    ) {
+        template.opsForHash<String, String>().delete(key, hashKey)
+    }
 }

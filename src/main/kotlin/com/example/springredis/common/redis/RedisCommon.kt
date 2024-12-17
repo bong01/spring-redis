@@ -57,9 +57,9 @@ class RedisCommon(
         key: String,
         n: Long,
         clazz: Class<T>,
-    ): Set<T> {
+    ): List<T> {
         val jsonValues = template.opsForZSet().reverseRange(key, 0, n - 1)
-        return jsonValues?.map { objectMapper.readValue(it, clazz) }?.toSet() ?: emptySet()
+        return jsonValues?.map { objectMapper.readValue(it, clazz) } ?: emptyList()
     }
 
     fun <T> addToListLeft(

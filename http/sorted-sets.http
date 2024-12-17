@@ -1,0 +1,17 @@
+POST {{host}}/sorted-sets
+Content-Type: application/json
+
+{
+  "key": "test",
+  "value": "test",
+  "score": 1000
+}
+
+###
+< {%
+    request.variables.set("key", "test")
+    request.variables.set("minScore", "0")
+    request.variables.set("maxScore", "1000")
+%}
+GET {{host}}/sorted-sets/{{key}}?minScore={{minScore}}&maxScore={{maxScore}}
+Content-Type: application/json

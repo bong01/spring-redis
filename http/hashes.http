@@ -1,0 +1,16 @@
+POST {{host}}/hashes:put
+Content-Type: application/json
+
+{
+  "key": "hash",
+  "field": "test",
+  "value": "test"
+}
+
+###
+< {%
+    request.variables.set("key", "hash")
+    request.variables.set("field", "test")
+%}
+GET {{host}}/hashes?key={{key}}&field={{field}}
+Content-Type: application/json

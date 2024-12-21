@@ -1,0 +1,23 @@
+POST {{host}}/lists:append
+Content-Type: application/json
+
+{
+  "key": "list",
+  "value": "test2"
+}
+
+###
+POST {{host}}/lists:prepend
+Content-Type: application/json
+
+{
+  "key": "list",
+  "value": "test1"
+}
+
+###
+< {%
+    request.variables.set("key", "list")
+%}
+GET {{host}}/lists?key={{key}}
+Content-Type: application/json

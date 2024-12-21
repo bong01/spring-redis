@@ -5,8 +5,10 @@ import com.example.springredis.common.exception.Exception
 import com.example.springredis.common.model.ValueWithTtl
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.ClassPathResource
 import org.springframework.data.redis.connection.StringRedisConnection
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.script.DefaultRedisScript
 import org.springframework.stereotype.Service
 import java.time.Duration
 
@@ -156,4 +158,17 @@ class RedisCommon(
 
         return ValueWithTtl(value, ttl)
     }
+
+    fun sumTwoKeyAndRenew(
+        key1: String,
+        key2: String,
+        resultKey: String,
+    ): Long =
+        DefaultRedisScript<Long>()
+            .apply {
+                setLocation(ClassPathResource("/lua/newKey.lua"))
+                setResultType(Long::class.java)
+            }.let { script ->
+                template.execute(script, listOf(key1, key2, resultKey))
+            }
 }

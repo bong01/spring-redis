@@ -52,4 +52,12 @@ class RedisStrategy(
 
         return base * exp(-decayRate * remainTtl)
     }
+
+    fun luaScript(
+        key1: String,
+        key2: String,
+        newKey: String,
+    ) {
+        redis.sumTwoKeyAndRenew(key1, key2, newKey)
+    }
 }

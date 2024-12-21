@@ -1,0 +1,8 @@
+### SET test1 1, SET test2 2
+< {%
+    request.variables.set("key1", "test1")
+    request.variables.set("key2", "test2")
+    request.variables.set("newKey", "test3")
+%}
+POST {{host}}/strategies/lua-script?key1={{key1}}&key2={{key2}}&newKey={{newKey}}
+Content-Type: application/json

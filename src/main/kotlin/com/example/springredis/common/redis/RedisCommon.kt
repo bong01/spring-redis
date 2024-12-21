@@ -78,7 +78,7 @@ class RedisCommon(
         template.opsForList().rightPush(key, jsonValue)
     }
 
-    fun <T> getList(
+    fun <T> getAllList(
         key: String,
         clazz: Class<T>,
     ): List<T> {

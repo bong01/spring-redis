@@ -2,8 +2,10 @@ package com.example.springredis.common.redis
 
 import com.example.springredis.common.exception.ErrorCode
 import com.example.springredis.common.exception.Exception
+import com.example.springredis.common.model.ValueWithTtl
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.connection.StringRedisConnection
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -133,4 +135,25 @@ class RedisCommon(
         key: String,
         offset: Long,
     ): Boolean = template.opsForValue().getBit(key, offset) ?: throw Exception(ErrorCode.REDIS_BIT_NOT_INITIALIZED)
+
+    fun <T> getValueWithTtl(
+        key: String,
+        clazz: Class<T>,
+    ): ValueWithTtl<T> {
+        val results =
+            template.executePipelined { connection ->
+                (connection as StringRedisConnection).apply {
+                    get(key)
+                    ttl(key)
+                }
+                null
+            }
+
+        val value =
+            results[0]?.let { objectMapper.readValue(it as String, clazz) }
+                ?: throw Exception(ErrorCode.REDIS_VALUE_NOT_FOUND)
+        val ttl = results[1] as? Long ?: throw Exception(ErrorCode.REDIS_TTL_NOT_FOUND)
+
+        return ValueWithTtl(value, ttl)
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.springredis.common.redis
 
+import com.example.springredis.common.exception.ErrorCode
+import com.example.springredis.common.exception.Exception
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
@@ -118,4 +120,17 @@ class RedisCommon(
     ) {
         template.opsForHash<String, String>().delete(key, hashKey)
     }
+
+    fun setBit(
+        key: String,
+        offset: Long,
+        value: Boolean,
+    ) {
+        template.opsForValue().setBit(key, offset, value)
+    }
+
+    fun getBit(
+        key: String,
+        offset: Long,
+    ): Boolean = template.opsForValue().getBit(key, offset) ?: throw Exception(ErrorCode.REDIS_BIT_NOT_INITIALIZED)
 }

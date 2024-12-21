@@ -5,4 +5,5 @@ enum class ErrorCode(
     val message: String,
 ) {
     REDIS_VALUE_NOT_FOUND(code = 100, message = "redis value not found"),
+    REDIS_BIT_NOT_INITIALIZED(code = 101, message = "redis bit flag not initialized"),
 }
